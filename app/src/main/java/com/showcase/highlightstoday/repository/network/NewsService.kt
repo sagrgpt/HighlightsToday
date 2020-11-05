@@ -21,20 +21,20 @@ class NewsService(
          return api.getHeadlines(category = category, pageNo = page)
              .map {
                  if(it.status == it.code)
-                    it.toArticleList()
+                    it.toArticleList(category)
                  else throw NetworkException(404, "Failed to get Headlines. ${it.message}")
              }
     }
 
-    private fun NewsResponse.toArticleList(): List<ArticleEntity> {
+    private fun NewsResponse.toArticleList(category: String): List<ArticleEntity> {
         val articleList = mutableListOf<ArticleEntity>()
         articles.forEach {
-            articleList.add(it.toArticleEntity())
+            articleList.add(it.toArticleEntity(category))
         }
         return articleList
     }
 
-    private fun ArticleSchema.toArticleEntity(): ArticleEntity{
+    private fun ArticleSchema.toArticleEntity(category: String): ArticleEntity{
         return ArticleEntity(
             author = author ?: "Unknown",
             content = content ?: "Unknown",
@@ -43,7 +43,8 @@ class NewsService(
             source = source.toEntity(),
             title = title,
             url = url,
-            urlToImage = urlToImage
+            urlToImage = urlToImage,
+            category = category
         )
     }
 

@@ -1,6 +1,6 @@
 package com.showcase.highlightstoday.repository.network
 
-import com.showcase.highlightstoday.repository.NetworkGateway
+import com.showcase.highlightstoday.repository.gateways.NetworkGateway
 import com.showcase.highlightstoday.repository.dataSource.NewsRemote
 
 

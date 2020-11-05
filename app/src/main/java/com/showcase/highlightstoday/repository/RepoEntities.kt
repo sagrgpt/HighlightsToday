@@ -16,7 +16,9 @@ data class ArticleEntity(
     val source: SourceEntity = SourceEntity(),
     val title: String,
     val url: String,
-    val urlToImage: String
+    val urlToImage: String,
+    val isFavourite: Boolean = false,
+    val category: String
 )
 
 data class SourceEntity(
