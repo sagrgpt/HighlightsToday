@@ -47,6 +47,7 @@ class HeadlinesViewModel(
         selectedTag = tag
         disposable.add(
             repository.fetchArticlesFromRemote(tag)
+                .retry()
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
                 .subscribe(::handleSuccess, ::handleError)
