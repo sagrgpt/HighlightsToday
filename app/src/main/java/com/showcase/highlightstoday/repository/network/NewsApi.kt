@@ -24,8 +24,8 @@ interface NewsApi {
     @Headers("Authorization: da11d0be37a44b96a760e5c015a8d017")
     fun getHeadlines(
         @Query("country") country: String = DEFAULT_COUNTRY,
-        @Query("category") category: String = DEFAULT_CATEGORY,
         @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
+        @Query("category") category: String,
         @Query("page") pageNo: Int = DEFAULT_PAGE_NO
     ): Single<NewsResponse>
 

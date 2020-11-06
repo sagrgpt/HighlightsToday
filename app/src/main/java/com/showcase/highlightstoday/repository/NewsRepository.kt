@@ -4,27 +4,21 @@ import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.Source
 import com.showcase.highlightstoday.repository.dataSource.NewsCache
 import com.showcase.highlightstoday.repository.dataSource.NewsRemote
-import com.showcase.highlightstoday.schedulers.SchedulerProvider
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
 
 class NewsRepository(
     private val remote: NewsRemote,
-    private val cache: NewsCache,
-    private val scheduler: SchedulerProvider
+    private val cache: NewsCache
 ) {
-
-    private var disposable: Disposable? = null
 
     fun getHighlights(category: String): Observable<List<Article>> {
         return cache.getHeadlines(category)
             .map {it.toArticleList()}
     }
 
-
     fun fetchArticlesFromRemote(category: String): Completable {
-        return Observable.fromCallable { cache.getTotalArticleCount(category) + 1 }
+        return Observable.fromCallable { (cache.getTotalArticleCount(category) /10) + 1 }
             .flatMap {
                 remote.getHeadlines(category, it)
                     .toObservable()

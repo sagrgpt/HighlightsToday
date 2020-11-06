@@ -3,7 +3,6 @@ package com.showcase.highlightstoday.repository.network
 import com.google.gson.annotations.SerializedName
 
 const val DEFAULT_COUNTRY = "in"
-const val DEFAULT_CATEGORY = "technology"
 const val DEFAULT_PAGE_SIZE = 10
 const val DEFAULT_PAGE_NO = 1
 
