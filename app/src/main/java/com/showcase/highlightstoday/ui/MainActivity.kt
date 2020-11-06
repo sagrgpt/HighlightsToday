@@ -1,14 +1,14 @@
 package com.showcase.highlightstoday.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.showcase.highlightstoday.Article
+import com.google.android.material.chip.Chip
+import com.showcase.highlightstoday.DEFAULT_TAG
 import com.showcase.highlightstoday.R
+import com.showcase.highlightstoday.TAG_LIST
 import com.showcase.highlightstoday.ViewEffects
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.repository.database.DatabaseFactory
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: HeadlinesViewModel
 
     private val bottomListener: () -> Unit = {
-        viewModel.viewMoreArticles()
+        viewModel.viewMoreArticles(getSelectedTag())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,23 +31,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setUpViewModel()
         initRecyclerView()
+        initTags()
         setUpSwipeToRefresh()
     }
 
     override fun onResume() {
         super.onResume()
-        refreshWorkout()
+        refreshWorkout(getSelectedTag())
     }
 
     private fun trigger(effect: ViewEffects) {
-        when(effect) {
+        when (effect) {
             ViewEffects.RefreshCompleted -> swipeToRefresh.isRefreshing = false
         }
     }
 
-    private fun refreshWorkout() {
+    private fun refreshWorkout(tag: String) {
         swipeToRefresh.isRefreshing = true
-        viewModel.viewArticles()
+        viewModel.viewArticles(tag)
     }
 
     private fun initRecyclerView() {
@@ -60,8 +61,29 @@ class MainActivity : AppCompatActivity() {
         articleList?.adapter = adapter
     }
 
+    private fun initTags() {
+        for (index in TAG_LIST.indices) {
+            val chip = layoutInflater.inflate(
+                R.layout.tag_item,
+                chipGroup,
+                false
+            ) as Chip
+            chip.id = index + 1
+            chip.text = TAG_LIST[index]
+            chipGroup.addView(chip)
+        }
+        chipGroup.check(TAG_LIST.indexOf(DEFAULT_TAG) + 1)
+        chipGroup.setOnCheckedChangeListener { _, id ->
+            refreshWorkout(TAG_LIST[id - 1])
+        }
+    }
+
+    private fun getSelectedTag() = TAG_LIST[chipGroup.checkedChipId - 1]
+
     private fun setUpSwipeToRefresh() {
-        swipeToRefresh.setOnRefreshListener { refreshWorkout() }
+        swipeToRefresh.setOnRefreshListener {
+            refreshWorkout(getSelectedTag())
+        }
     }
 
     private fun setUpViewModel() {

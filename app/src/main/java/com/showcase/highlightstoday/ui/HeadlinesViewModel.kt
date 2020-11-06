@@ -29,7 +29,8 @@ class HeadlinesViewModel(
         disposable.clear()
     }
 
-    fun viewArticles(tag: String = selectedTag) {
+    fun viewArticles(tag: String) {
+        disposable.clear()
         selectedTag = tag
         disposable.addAll(
             repository.getHighlights(selectedTag)

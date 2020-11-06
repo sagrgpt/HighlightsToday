@@ -6,7 +6,7 @@ import androidx.room.Entity
 
 @Entity(
     tableName = "articles_table",
-    primaryKeys = ["title", "published_at"]
+    primaryKeys = ["title", "published_at", "category"]
 )
 data class ArticleDbo(
     val title: String,
