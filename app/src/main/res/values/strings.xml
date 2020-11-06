@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Highlights Today</string>
+    <string name="news_image_desc">Article poster</string>
 </resources>
