@@ -11,6 +11,8 @@ interface NewsCache {
 
     fun addArticles(articleList: List<ArticleEntity>)
 
+    fun clearCache(category: String)
+
     fun getTotalArticleCount(category: String): Int
 
     fun getHeadlines(

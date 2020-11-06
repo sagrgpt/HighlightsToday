@@ -53,6 +53,8 @@ class HeadlinesViewModelTest {
         source = SourceEntity("Unknown", "CNET")
     )
 
+    private val article2 = article1.copy(title = "iPhone 12 Pro", publishedAt = 1607896003000)
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)

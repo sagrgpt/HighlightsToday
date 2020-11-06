@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.DEFAULT_TAG
+import com.showcase.highlightstoday.ViewEffects
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
 import io.reactivex.disposables.CompositeDisposable
@@ -18,8 +19,10 @@ class HeadlinesViewModel(
 
     private val disposable = CompositeDisposable()
     private val articleLiveData = MutableLiveData<List<Article>>()
+    private val viewEffectsLiveData = MutableLiveData<ViewEffects>()
     private var selectedTag: String = DEFAULT_TAG
     val articles: LiveData<List<Article>> = articleLiveData
+    val viewEffects: LiveData<ViewEffects> = viewEffectsLiveData
 
     override fun onCleared() {
         super.onCleared()
@@ -28,11 +31,15 @@ class HeadlinesViewModel(
 
     fun viewArticles(tag: String = selectedTag) {
         selectedTag = tag
-        disposable.add(
+        disposable.addAll(
             repository.getHighlights(selectedTag)
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
-                .subscribe(::readList, ::handleError)
+                .subscribe(::readList, ::handleError),
+            repository.fetchArticlesFromRemote(selectedTag, 1)
+                .subscribeOn(scheduler.io)
+                .observeOn(scheduler.io)
+                .subscribe(::handleSuccess, ::handleError)
         )
     }
 
@@ -46,7 +53,18 @@ class HeadlinesViewModel(
         )
     }
 
+    fun refreshArticles(category: String) {
+        disposable.add(
+        repository.fetchArticlesFromRemote(category, 1)
+            .subscribeOn(scheduler.io)
+            .observeOn(scheduler.io)
+            .subscribe(::handleSuccess, ::handleError)
+        )
+    }
+
+
     private fun handleSuccess() {
+        viewEffectsLiveData.postValue(ViewEffects.RefreshCompleted)
         Timber.v("Fetched new workouts from remote")
     }
 

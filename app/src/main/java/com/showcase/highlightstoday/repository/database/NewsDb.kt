@@ -17,6 +17,10 @@ class NewsDb(
         dao.addAllArticles(articleList.toDboList())
     }
 
+    override fun clearCache(category: String) {
+        dao.deleteArticles(category)
+    }
+
     override fun getTotalArticleCount(category: String): Int {
         return dao.getArticleCountFor(category)
     }

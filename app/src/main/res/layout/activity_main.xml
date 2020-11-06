@@ -7,6 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/articleList"
         android:layout_width="match_parent"
@@ -19,4 +24,5 @@
         android:scrollbars="vertical"
         android:scrollbarFadeDuration="@android:integer/config_shortAnimTime"/>
 
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

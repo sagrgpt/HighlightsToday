@@ -19,12 +19,13 @@ class NewsRepository(
 
     fun fetchArticlesFromRemote(category: String): Completable {
         return Observable.fromCallable { (cache.getTotalArticleCount(category) /10) + 1 }
-            .flatMap {
-                remote.getHeadlines(category, it)
-                    .toObservable()
-            }
+            .flatMapCompletable { fetchArticlesFromRemote(category, it) }
+    }
+
+    fun fetchArticlesFromRemote(category: String, pageNo: Int): Completable {
+        return remote.getHeadlines(category, pageNo)
             .map { cache.addArticles(it) }
-            .ignoreElements()
+            .ignoreElement()
     }
 
     private fun List<ArticleEntity>.toArticleList(): List<Article> {

@@ -15,5 +15,7 @@
             tools:targetApi="l">?attr/colorPrimaryVariant
         </item>
         <!-- Customize your theme here. -->
+        <item name="gradientStart">@color/grey</item>
+        <item name="gradientEnd">@color/black</item>
     </style>
 </resources>

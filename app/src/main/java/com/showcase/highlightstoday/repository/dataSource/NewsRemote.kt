@@ -1,6 +1,7 @@
 package com.showcase.highlightstoday.repository.dataSource
 
 import com.showcase.highlightstoday.repository.ArticleEntity
+import com.showcase.highlightstoday.repository.network.DEFAULT_PAGE_NO
 import io.reactivex.Single
 
 /**
@@ -16,7 +17,7 @@ interface NewsRemote {
      */
     fun getHeadlines(
         category: String,
-        page: Int
+        page: Int = DEFAULT_PAGE_NO
     ): Single<List<ArticleEntity>>
 
 }

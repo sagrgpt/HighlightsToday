@@ -26,7 +26,7 @@ interface NewsApi {
         @Query("country") country: String = DEFAULT_COUNTRY,
         @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
         @Query("category") category: String,
-        @Query("page") pageNo: Int = DEFAULT_PAGE_NO
+        @Query("page") pageNo: Int
     ): Single<NewsResponse>
 
 }

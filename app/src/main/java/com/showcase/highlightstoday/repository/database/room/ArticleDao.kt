@@ -9,10 +9,10 @@ import io.reactivex.Observable
 @Dao
 interface ArticleDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addArticles(article: ArticleDbo)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addAllArticles(articleList: List<ArticleDbo>)
 
     @Query("SELECT * FROM articles_table WHERE category = :category ORDER BY published_at DESC")
