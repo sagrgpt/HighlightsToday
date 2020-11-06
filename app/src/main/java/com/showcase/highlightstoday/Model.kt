@@ -9,7 +9,7 @@ data class Article(
     val isFavourite: Boolean = false,
     val category: String,
     val url: String,
-    val urlToImage: String,
+    val urlToImage: String?,
     val source: Source = Source()
 )
 

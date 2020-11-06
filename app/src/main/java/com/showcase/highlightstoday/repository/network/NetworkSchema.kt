@@ -35,7 +35,7 @@ data class ArticleSchema(
     @SerializedName("url")
     val url: String = "",
     @SerializedName("urlToImage")
-    val urlToImage: String? = ""
+    val urlToImage: String? = null
 )
 
 data class SourceSchema(

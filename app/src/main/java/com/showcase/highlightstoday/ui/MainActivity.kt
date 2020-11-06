@@ -5,13 +5,13 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.R
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.repository.database.DatabaseFactory
 import com.showcase.highlightstoday.repository.network.NetworkFactory
 import com.showcase.highlightstoday.schedulers.DefaultScheduler
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +19,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repository: NewsRepository
     private lateinit var adapter: ArticleAdapter
     private lateinit var viewModel: HeadlinesViewModel
+
+    private val bottomListener: () -> Unit = {
+        viewModel.viewMoreArticles()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +42,7 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager.VERTICAL,
             false
         )
-
-        adapter = ArticleAdapter()
+        adapter = ArticleAdapter(this, bottomListener)
         articleList?.adapter = adapter
     }
 

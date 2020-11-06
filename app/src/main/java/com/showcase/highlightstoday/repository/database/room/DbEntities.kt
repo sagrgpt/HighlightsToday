@@ -19,7 +19,7 @@ data class ArticleDbo(
     val isSaved: Boolean,
     val url: String,
     @ColumnInfo(name = "image_url")
-    val urlToImage: String,
+    val urlToImage: String?,
     val author: String,
     @Embedded
     val source: SourceDbo
