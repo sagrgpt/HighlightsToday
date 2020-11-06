@@ -10,7 +10,7 @@ object DatabaseFactory {
     private const val dbName = "NewsDb"
     private var gateway: DatabaseGateway? = null
 
-    fun getGateway(context: Context): DatabaseGateway {
+    fun createGateway(context: Context): DatabaseGateway {
         return gateway
             ?: CacheGateway(buildDatabase(context.applicationContext))
                 .also { gateway = it }

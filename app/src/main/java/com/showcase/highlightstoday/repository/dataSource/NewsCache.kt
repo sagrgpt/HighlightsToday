@@ -9,6 +9,8 @@ import io.reactivex.Observable
  */
 interface NewsCache {
 
+    fun addArticles(articleList: List<ArticleEntity>)
+
     fun getTotalArticleCount(category: String): Int
 
     fun getHeadlines(

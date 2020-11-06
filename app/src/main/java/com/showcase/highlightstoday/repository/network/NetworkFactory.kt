@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 object NetworkFactory {
 
-    private const val baseUrl = "http://newsapi.org/"
+    private const val baseUrl = "https://newsapi.org/"
 
     /**
      * Creates a new instance of a network gateway

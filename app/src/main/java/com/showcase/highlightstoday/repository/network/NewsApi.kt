@@ -2,6 +2,8 @@ package com.showcase.highlightstoday.repository.network
 
 import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.Query
 
 /**
@@ -19,6 +21,7 @@ interface NewsApi {
      * @return List of news articles
      */
     @GET("v2/top-headlines")
+    @Headers("Authorization: da11d0be37a44b96a760e5c015a8d017")
     fun getHeadlines(
         @Query("country") country: String = DEFAULT_COUNTRY,
         @Query("category") category: String = DEFAULT_CATEGORY,
