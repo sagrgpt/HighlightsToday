@@ -8,6 +8,12 @@ import com.showcase.highlightstoday.ui.topHeadlines.ArticleAdapter
 import com.showcase.highlightstoday.ui.topHeadlines.ClickEvent
 import com.showcase.highlightstoday.ui.topHeadlines.HeadlinesViewModel
 
+/**
+ * Second level component in the dependency graph.
+ * This root is synonymous to presentation layer.
+ * Currently, this is attached to every fragment
+ * @see [CompositionRoot]
+ */
 class PresentationRoot(
     private val compositionRoot: CompositionRoot
 ) {

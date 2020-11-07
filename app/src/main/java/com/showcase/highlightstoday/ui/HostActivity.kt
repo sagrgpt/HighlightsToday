@@ -11,6 +11,12 @@ import com.showcase.highlightstoday.R
 import com.showcase.highlightstoday.di.CompositionRoot
 import timber.log.Timber
 
+/**
+ * This is a single activity application with very limited
+ * dependencies and hence, the composition root is attached to this activity.
+ *
+ * In-case of extending to multiple activity, the dependency graph must also adjust.
+ */
 class HostActivity : AppCompatActivity() {
 
     private lateinit var compositionRoot: CompositionRoot

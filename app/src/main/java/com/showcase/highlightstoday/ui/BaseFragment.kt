@@ -6,6 +6,10 @@ import com.showcase.highlightstoday.di.CompositionRoot
 import com.showcase.highlightstoday.di.Injector
 import com.showcase.highlightstoday.di.PresentationRoot
 
+/**
+ * A low-level abstraction for dependency injection
+ * logic for all fragments.
+ */
 open class BaseFragment: Fragment() {
     private val presentationRoot by lazy {
         PresentationRoot(getCompositionRoot())

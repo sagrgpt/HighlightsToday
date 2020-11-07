@@ -5,10 +5,17 @@ import com.showcase.highlightstoday.ui.topHeadlines.HeadlineFragment
 import timber.log.Timber
 import java.lang.RuntimeException
 
+/**
+ * Injection framework to inject public dependencies of any class.
+ */
 class Injector(
     private val presentationRoot: PresentationRoot
 ) {
 
+    /**
+     * @param client
+     *  The object which needs dependencies injected into
+     */
     fun inject(client: Any) {
         when (client) {
             is HeadlineFragment -> injectDependencies(client)
