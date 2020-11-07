@@ -12,7 +12,10 @@ import com.showcase.highlightstoday.repository.database.room.AppDatabase
 class CacheGateway(
     private val appDatabase: AppDatabase
 ): DatabaseGateway {
+
+    private val newsCache by lazy { NewsDb(appDatabase.getArticleDao()) }
+
     override fun getNewsCache(): NewsCache {
-        return NewsDb(appDatabase.getArticleDao())
+        return newsCache
     }
 }

@@ -19,22 +19,28 @@ import com.showcase.highlightstoday.repository.database.DatabaseFactory
 import com.showcase.highlightstoday.repository.network.NetworkFactory
 import com.showcase.highlightstoday.schedulers.DefaultScheduler
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
+import com.showcase.highlightstoday.ui.BaseFragment
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_headline.*
 
-class HeadlineFragment : Fragment() {
+class HeadlineFragment : BaseFragment() {
 
-    private lateinit var repository: NewsRepository
-    private lateinit var adapter: ArticleAdapter
     private lateinit var viewModel: HeadlinesViewModel
-    private lateinit var scheduler: SchedulerProvider
     private var disposable: Disposable? = null
-
-    private val bottomListener: () -> Unit = {
+    lateinit var viewModelFactory: HeadlinesViewModel.HeadlinesVmFactory
+    lateinit var scheduler: SchedulerProvider
+    lateinit var adapter: ArticleAdapter
+    val bottomListener: () -> Unit = {
         viewModel.viewMoreArticles(getSelectedTag())
     }
+    val clickListener: (String) -> Unit = {
+        viewModel.articleClicked(it)
+    }
 
-    private val clickListener: (String) -> Unit = {viewModel.articleClicked(it)}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getInjector().inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -86,7 +92,6 @@ class HeadlineFragment : Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
-        adapter = ArticleAdapter(requireContext(), bottomListener, clickListener)
         articleList?.adapter = adapter
     }
 
@@ -116,20 +121,10 @@ class HeadlineFragment : Fragment() {
     }
 
     private fun setUpViewModel() {
-        val networkGateway = NetworkFactory.createGateway()
-        val databaseGateway = DatabaseFactory.createGateway(requireContext().applicationContext)
-
-        repository = NewsRepository(
-            networkGateway.getNewsRemote(),
-            databaseGateway.getNewsCache()
-        )
-        scheduler = DefaultScheduler()
-        val viewModelFactory = HeadlinesViewModel.HeadlinesVmFactory(scheduler, repository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(HeadlinesViewModel::class.java)
-
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(HeadlinesViewModel::class.java)
         viewModel.articles
             .observe(viewLifecycleOwner) { adapter.submitList(it) }
-
     }
 
     private fun observeSideEffects() {

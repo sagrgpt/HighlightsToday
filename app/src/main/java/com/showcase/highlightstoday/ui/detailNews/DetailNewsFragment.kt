@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.navigation.fragment.navArgs
 import com.showcase.highlightstoday.R
+import com.showcase.highlightstoday.ui.BaseFragment
 import kotlinx.android.synthetic.main.detail_news_fragment.*
 
-class DetailNewsFragment : Fragment() {
+class DetailNewsFragment : BaseFragment() {
 
     private val args: DetailNewsFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        getInjector().inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
