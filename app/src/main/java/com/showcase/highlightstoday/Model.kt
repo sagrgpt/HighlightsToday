@@ -20,4 +20,7 @@ data class Source(
 
 sealed class ViewEffects {
     object RefreshCompleted : ViewEffects()
+    data class OpenNewsDetails(
+        val newsUrl: String
+    ) : ViewEffects()
 }

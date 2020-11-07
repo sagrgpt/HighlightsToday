@@ -9,7 +9,9 @@ import com.showcase.highlightstoday.DEFAULT_TAG
 import com.showcase.highlightstoday.ViewEffects
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 
 class HeadlinesViewModel(
@@ -19,14 +21,17 @@ class HeadlinesViewModel(
 
     private val disposable = CompositeDisposable()
     private val articleLiveData = MutableLiveData<List<Article>>()
-    private val viewEffectsLiveData = MutableLiveData<ViewEffects>()
+    private val viewEffectsLiveData: PublishSubject<ViewEffects> = PublishSubject.create()
     private var selectedTag: String = DEFAULT_TAG
     val articles: LiveData<List<Article>> = articleLiveData
-    val viewEffects: LiveData<ViewEffects> = viewEffectsLiveData
 
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
+    }
+
+    fun listenViewEffects(): Observable<ViewEffects> {
+        return viewEffectsLiveData
     }
 
     fun viewArticles(tag: String) {
@@ -57,16 +62,19 @@ class HeadlinesViewModel(
 
     fun refreshArticles(category: String) {
         disposable.add(
-        repository.fetchArticlesFromRemote(category, 1)
-            .subscribeOn(scheduler.io)
-            .observeOn(scheduler.io)
-            .subscribe(::handleSuccess, ::handleError)
+            repository.fetchArticlesFromRemote(category, 1)
+                .subscribeOn(scheduler.io)
+                .observeOn(scheduler.io)
+                .subscribe(::handleSuccess, ::handleError)
         )
     }
 
+    fun articleClicked(url: String) {
+        viewEffectsLiveData.onNext(ViewEffects.OpenNewsDetails(url))
+    }
 
     private fun handleSuccess() {
-        viewEffectsLiveData.postValue(ViewEffects.RefreshCompleted)
+        viewEffectsLiveData.onNext(ViewEffects.RefreshCompleted)
         Timber.v("Fetched new workouts from remote")
     }
 

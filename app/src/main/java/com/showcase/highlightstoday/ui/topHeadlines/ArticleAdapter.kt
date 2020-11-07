@@ -4,26 +4,19 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.LayoutRes
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.R
-import java.text.SimpleDateFormat
-import java.util.*
 
 class ArticleAdapter(
     private val context: Context,
-    private val lastItemReachedTrigger: () -> Unit
+    private val lastItemReachedTrigger: () -> Unit,
+    private val clickListener: (String) -> Unit
 ) : ListAdapter<Article, ArticleViewHolder>(DiffCallback())  {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        return ArticleViewHolder(context, parent.inflate(R.layout.article_layout))
+        return ArticleViewHolder(context, parent.inflate(R.layout.article_layout), clickListener)
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {

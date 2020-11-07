@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.card.MaterialCardView
 import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.R
 import java.text.SimpleDateFormat
@@ -15,9 +16,11 @@ import java.util.*
 
 class ArticleViewHolder(
     private val context: Context,
-    itemView: View
+    itemView: View,
+    private val clickListener: (String) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
+    private val articleContainer = itemView.findViewById<MaterialCardView>(R.id.card)
     private val imageView = itemView.findViewById<ImageView>(R.id.newsImage)
     private val title = itemView.findViewById<TextView>(R.id.articleTitle)
     private val desc = itemView.findViewById<TextView>(R.id.articleDesc)
@@ -33,6 +36,7 @@ class ArticleViewHolder(
         setAuthor(article)
         setSource(article)
         setDate(article)
+        setClickListener(article)
     }
 
     private fun setImage(article: Article) {
@@ -79,6 +83,10 @@ class ArticleViewHolder(
             .time
             .let { SimpleDateFormat("hh:mm a dd-MM-yyyy", Locale.ROOT).format(it) }
             .also { date?.text = it }
+    }
+
+    private fun setClickListener(article: Article) {
+        articleContainer.setOnClickListener { clickListener(article.url) }
     }
 
 }

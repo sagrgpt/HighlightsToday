@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.showcase.highlightstoday.DEFAULT_TAG
@@ -17,6 +18,8 @@ import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.repository.database.DatabaseFactory
 import com.showcase.highlightstoday.repository.network.NetworkFactory
 import com.showcase.highlightstoday.schedulers.DefaultScheduler
+import com.showcase.highlightstoday.schedulers.SchedulerProvider
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_headline.*
 
 class HeadlineFragment : Fragment() {
@@ -24,14 +27,17 @@ class HeadlineFragment : Fragment() {
     private lateinit var repository: NewsRepository
     private lateinit var adapter: ArticleAdapter
     private lateinit var viewModel: HeadlinesViewModel
+    private lateinit var scheduler: SchedulerProvider
+    private var disposable: Disposable? = null
 
     private val bottomListener: () -> Unit = {
         viewModel.viewMoreArticles(getSelectedTag())
     }
 
+    private val clickListener: (String) -> Unit = {viewModel.articleClicked(it)}
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_headline, container, false)
     }
 
@@ -41,16 +47,23 @@ class HeadlineFragment : Fragment() {
         initRecyclerView()
         initTags()
         setUpSwipeToRefresh()
+        refreshWorkout(getSelectedTag())
     }
 
     override fun onResume() {
         super.onResume()
-        refreshWorkout(getSelectedTag())
+        observeSideEffects()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        disposable?.dispose()
     }
 
     private fun trigger(effect: ViewEffects) {
         when (effect) {
             ViewEffects.RefreshCompleted -> swipeToRefresh.isRefreshing = false
+            is ViewEffects.OpenNewsDetails -> navigateToDetailNews(effect.newsUrl)
         }
     }
 
@@ -59,13 +72,21 @@ class HeadlineFragment : Fragment() {
         viewModel.viewArticles(tag)
     }
 
+    private fun navigateToDetailNews(url: String) {
+        val direction = HeadlineFragmentDirections
+            .actionHeadlineFragmentToDetailNewsFragment(url)
+        findNavController()
+            .navigate(direction)
+    }
+
+
     private fun initRecyclerView() {
         articleList?.layoutManager = LinearLayoutManager(
             requireContext(),
             LinearLayoutManager.VERTICAL,
             false
         )
-        adapter = ArticleAdapter(requireContext(), bottomListener)
+        adapter = ArticleAdapter(requireContext(), bottomListener, clickListener)
         articleList?.adapter = adapter
     }
 
@@ -102,16 +123,18 @@ class HeadlineFragment : Fragment() {
             networkGateway.getNewsRemote(),
             databaseGateway.getNewsCache()
         )
-
-        val viewModelFactory = HeadlinesViewModel.HeadlinesVmFactory(DefaultScheduler(), repository)
+        scheduler = DefaultScheduler()
+        val viewModelFactory = HeadlinesViewModel.HeadlinesVmFactory(scheduler, repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(HeadlinesViewModel::class.java)
 
         viewModel.articles
             .observe(viewLifecycleOwner) { adapter.submitList(it) }
 
+    }
 
-        viewModel.viewEffects
-            .observe(viewLifecycleOwner) { trigger(it) }
-
+    private fun observeSideEffects() {
+        disposable = viewModel.listenViewEffects()
+            .observeOn(scheduler.ui)
+            .subscribe { trigger(it) }
     }
 }
