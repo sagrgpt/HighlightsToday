@@ -9,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.showcase.highlightstoday.R
 import com.showcase.highlightstoday.di.CompositionRoot
+import timber.log.Timber
 
 class HostActivity : AppCompatActivity() {
 
@@ -20,6 +21,7 @@ class HostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         compositionRoot = CompositionRoot(this)
+        Timber.plant(Timber.DebugTree())
         setContentView(R.layout.activity_host)
         setUpNavController()
     }

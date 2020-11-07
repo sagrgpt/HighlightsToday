@@ -21,7 +21,6 @@ interface NewsApi {
      * @return List of news articles
      */
     @GET("v2/top-headlines")
-    @Headers("Authorization: da11d0be37a44b96a760e5c015a8d017")
     fun getHeadlines(
         @Query("country") country: String = DEFAULT_COUNTRY,
         @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
