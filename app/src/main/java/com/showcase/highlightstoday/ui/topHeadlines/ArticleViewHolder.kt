@@ -17,8 +17,10 @@ import java.util.*
 class ArticleViewHolder(
     private val context: Context,
     itemView: View,
-    private val clickListener: (String) -> Unit
+    private val clickListener: (ClickEvent) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
+
+    private lateinit var article: Article
 
     private val articleContainer = itemView.findViewById<MaterialCardView>(R.id.card)
     private val imageView = itemView.findViewById<ImageView>(R.id.newsImage)
@@ -30,27 +32,29 @@ class ArticleViewHolder(
     private val favBtn = itemView.findViewById<ImageButton>(R.id.favouriteBtn)
 
     fun bindTo(article: Article) {
-        setImage(article)
-        setTitle(article)
-        setDesc(article)
-        setAuthor(article)
-        setSource(article)
-        setDate(article)
-        setClickListener(article)
+        this.article = article
+        setImage()
+        setTitle()
+        setDesc()
+        setAuthor()
+        setSource()
+        setDate()
+        setFavBtn()
+        setClickListener()
     }
 
-    private fun setImage(article: Article) {
+    private fun setImage() {
         Glide.with(context)
             .load(article.urlToImage)
             .placeholder(ContextCompat.getDrawable(context, R.drawable.gradient))
             .into(imageView)
     }
 
-    private fun setTitle(article: Article) {
+    private fun setTitle() {
         title?.text = article.title
     }
 
-    private fun setDesc(article: Article) {
+    private fun setDesc() {
         article.description.takeUnless { it=="Unknown" }
             ?.also {
                 desc?.visibility = View.VISIBLE
@@ -59,7 +63,7 @@ class ArticleViewHolder(
             ?: run { desc?.visibility = View.GONE }
     }
 
-    private fun setAuthor(article: Article) {
+    private fun setAuthor() {
         (article.author.takeIf { it != "Unknown" }
             ?.also {
                 author?.visibility = View.VISIBLE
@@ -68,7 +72,7 @@ class ArticleViewHolder(
             ?: run { author?.visibility = View.GONE })
     }
 
-    private fun setSource(article: Article) {
+    private fun setSource() {
         (article.source.name.takeIf { it != "Unknown" }
             ?.also {
                 source?.visibility = View.VISIBLE
@@ -77,7 +81,7 @@ class ArticleViewHolder(
             ?: run { source?.visibility = View.GONE })
     }
 
-    private fun setDate(article: Article) {
+    private fun setDate() {
         Calendar.getInstance()
             .apply { timeInMillis = article.publishedAt }
             .time
@@ -85,8 +89,36 @@ class ArticleViewHolder(
             .also { date?.text = it }
     }
 
-    private fun setClickListener(article: Article) {
-        articleContainer.setOnClickListener { clickListener(article.url) }
+    private fun setFavBtn() {
+        if(article.isFavourite)
+            favBtn.setImageResource(R.drawable.ic_favorite_selected)
+        else
+            favBtn.setImageResource(R.drawable.ic_favorite_unselected)
+    }
+
+
+    private fun setClickListener() {
+        articleContainer.setOnClickListener {
+            clickListener(ClickEvent.CardClicked(article.url))
+        }
+        favBtn.setOnClickListener {
+            if(article.isFavourite)
+                removeFromFav()
+            else
+                saveToFav()
+        }
+    }
+
+    private fun saveToFav() {
+        clickListener(ClickEvent.AddToFavourite(article))
+        article = article.copy(isFavourite = true)
+        setFavBtn()
+    }
+
+    private fun removeFromFav() {
+        clickListener(ClickEvent.RemoteFavourite(article))
+        article = article.copy(isFavourite = false)
+        setFavBtn()
     }
 
 }

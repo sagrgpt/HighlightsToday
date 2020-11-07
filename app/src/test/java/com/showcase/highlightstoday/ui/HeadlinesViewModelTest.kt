@@ -2,12 +2,14 @@ package com.showcase.highlightstoday.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.verify
+import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.repository.ArticleEntity
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.repository.SourceEntity
 import com.showcase.highlightstoday.repository.dataSource.NewsCache
 import com.showcase.highlightstoday.repository.dataSource.NewsRemote
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
+import com.showcase.highlightstoday.ui.topHeadlines.ClickEvent
 import com.showcase.highlightstoday.ui.topHeadlines.HeadlinesViewModel
 import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
@@ -17,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.times
 import org.mockito.MockitoAnnotations
 
 class HeadlinesViewModelTest {
@@ -54,8 +57,6 @@ class HeadlinesViewModelTest {
         source = SourceEntity("Unknown", "CNET")
     )
 
-    private val article2 = article1.copy(title = "iPhone 12 Pro", publishedAt = 1607896003000)
-
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
@@ -70,7 +71,8 @@ class HeadlinesViewModelTest {
         val category = "technology"
         `when`(cache.getHeadlines(category))
             .thenReturn(Observable.just(cachedArticleList))
-
+        `when`(remote.getHeadlines(category, 1))
+            .thenReturn(Single.just(listOf(article1)))
         viewModel.viewArticles(category)
 
         val result = viewModel.articles.value!!
@@ -97,7 +99,8 @@ class HeadlinesViewModelTest {
         viewModel.viewArticles(category)
         emitter?.onNext(remoteArticleList)
 
-        verify(remote).getHeadlines(category,1)
+        verify(remote, times(2))
+            .getHeadlines(category,1)
         val result = viewModel.articles.value!!
         assert(result.size ==2)
     }
@@ -115,12 +118,14 @@ class HeadlinesViewModelTest {
             .thenReturn(subject)
         `when`(cache.getTotalArticleCount(category))
             .thenReturn(cachedArticleList.size)
+        `when`(remote.getHeadlines(category, 1))
+            .thenReturn(Single.just(emptyList()))
         `when`(remote.getHeadlines(category, 2))
             .thenReturn(Single.just(remoteArticleList))
 
         viewModel.viewArticles(category)
         subject.onNext(cachedArticleList)
-        viewModel.viewMoreArticles(category)
+        viewModel.viewMoreArticles(category, 10)
         cachedArticleList.addAll(remoteArticleList)
         subject.onNext(cachedArticleList)
 
@@ -128,5 +133,15 @@ class HeadlinesViewModelTest {
         val result = viewModel.articles.value!!
         assert(result.size == 12)
 
+    }
+
+    @Test
+    fun paginationTest() {
+
+        val tag = "General"
+        val currentItemsVisibleToUser = 10
+        viewModel.viewMoreArticles(tag, 10)
+
+        verify(cache).getTillPage(2)
     }
 }

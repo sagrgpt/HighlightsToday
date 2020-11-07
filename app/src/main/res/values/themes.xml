@@ -17,5 +17,6 @@
         <!-- Customize your theme here. -->
         <item name="gradientStart">@color/white</item>
         <item name="gradientEnd">@color/grey</item>
+        <item name="clearCacheIcon">@drawable/ic_clear_cache_dark</item>
     </style>
 </resources>

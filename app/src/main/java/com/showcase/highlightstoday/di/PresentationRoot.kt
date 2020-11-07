@@ -5,6 +5,7 @@ import com.showcase.highlightstoday.repository.dataSource.NewsCache
 import com.showcase.highlightstoday.repository.dataSource.NewsRemote
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
 import com.showcase.highlightstoday.ui.topHeadlines.ArticleAdapter
+import com.showcase.highlightstoday.ui.topHeadlines.ClickEvent
 import com.showcase.highlightstoday.ui.topHeadlines.HeadlinesViewModel
 
 class PresentationRoot(
@@ -13,7 +14,7 @@ class PresentationRoot(
 
     fun getArticleAdapter(
         bottomListener: () -> Unit,
-        clickListener: (String) -> Unit
+        clickListener: (ClickEvent) -> Unit
     ): ArticleAdapter {
         return ArticleAdapter(
             compositionRoot.rootContext,

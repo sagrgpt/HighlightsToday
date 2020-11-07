@@ -13,7 +13,7 @@ import com.showcase.highlightstoday.R
 class ArticleAdapter(
     private val context: Context,
     private val lastItemReachedTrigger: () -> Unit,
-    private val clickListener: (String) -> Unit
+    private val clickListener: (ClickEvent) -> Unit
 ) : ListAdapter<Article, ArticleViewHolder>(DiffCallback())  {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         return ArticleViewHolder(context, parent.inflate(R.layout.article_layout), clickListener)
@@ -27,11 +27,15 @@ class ArticleAdapter(
 
     class DiffCallback : DiffUtil.ItemCallback<Article>() {
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
-            return oldItem == newItem
+            return oldItem.title == newItem.title
+                && oldItem.publishedAt == newItem.publishedAt
+                && oldItem.category == newItem.category
         }
 
         override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
-            return oldItem.title == newItem.title && oldItem.publishedAt == newItem.publishedAt
+            return oldItem.title == newItem.title
+                && oldItem.publishedAt == newItem.publishedAt
+                && oldItem.category == newItem.category
         }
     }
 

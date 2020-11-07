@@ -97,15 +97,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_favourite"
+            tools:src="@drawable/ic_favorite_unselected"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/articleDesc"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.50"/>
+            app:layout_constraintVertical_bias="0.50"
+            android:contentDescription="@string/save_as_favourite" />
 
         <TextView
             android:id="@+id/articleDate"

@@ -17,8 +17,8 @@ class NewsDb(
         dao.addAllArticles(articleList.toDboList())
     }
 
-    override fun clearCache(category: String) {
-        dao.deleteArticles(category)
+    override fun clearCache(): Int {
+        return dao.deleteArticles()
     }
 
     override fun getTotalArticleCount(category: String): Int {
@@ -37,13 +37,13 @@ class NewsDb(
 
     override fun removeFromFavourite(articleEntity: ArticleEntity): Completable {
         return Completable.fromCallable {
-            dao.toggleFavourite(false, articleEntity.title, articleEntity.publishedAt)
+            dao.toggleFavourite(false, articleEntity.title, articleEntity.publishedAt, articleEntity.category)
         }
     }
 
     override fun addToFavourite(articleEntity: ArticleEntity): Completable {
         return Completable.fromCallable {
-            dao.toggleFavourite(true, articleEntity.title, articleEntity.publishedAt)
+            dao.toggleFavourite(true, articleEntity.title, articleEntity.publishedAt, articleEntity.category)
         }
     }
 

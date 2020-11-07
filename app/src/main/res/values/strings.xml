@@ -3,4 +3,8 @@
     <string name="news_image_desc">Article poster</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save_as_favourite">Save as favourite</string>
+    <string name="view_favorite">View favourite</string>
+    <string name="view_all">View All</string>
+    <string name="clear_cache">Clear Cache</string>
 </resources>

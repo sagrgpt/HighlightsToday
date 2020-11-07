@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.DEFAULT_TAG
-import com.showcase.highlightstoday.ViewEffects
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
 import io.reactivex.Observable
@@ -23,6 +22,7 @@ class HeadlinesViewModel(
     private val articleLiveData = MutableLiveData<List<Article>>()
     private val viewEffectsLiveData: PublishSubject<ViewEffects> = PublishSubject.create()
     private var selectedTag: String = DEFAULT_TAG
+    private var isFavourite = false
     val articles: LiveData<List<Article>> = articleLiveData
 
     override fun onCleared() {
@@ -38,21 +38,21 @@ class HeadlinesViewModel(
         disposable.clear()
         selectedTag = tag
         disposable.addAll(
-            repository.getHighlights(selectedTag)
+            repository.getHighlights(selectedTag, isFavourite)
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
                 .subscribe(::readList, ::handleError),
-            repository.fetchArticlesFromRemote(selectedTag, 1)
+            repository.fetchArticlesFromRemote(selectedTag, 1, isFavourite)
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
                 .subscribe(::handleSuccess, ::handleError)
         )
     }
 
-    fun viewMoreArticles(tag: String = selectedTag) {
+    fun viewMoreArticles(tag: String = selectedTag, currentListSize: Int) {
         selectedTag = tag
         disposable.add(
-            repository.fetchArticlesFromRemote(tag)
+            repository.fetchArticlesFromRemote(tag, isFavourite)
                 .retry()
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
@@ -60,17 +60,47 @@ class HeadlinesViewModel(
         )
     }
 
-    fun refreshArticles(category: String) {
+    fun onClick(clickEvent: ClickEvent) {
+        when (clickEvent) {
+            is ClickEvent.CardClicked -> viewEffectsLiveData.onNext(
+                ViewEffects.OpenNewsDetails(clickEvent.articleLink)
+            )
+            is ClickEvent.AddToFavourite -> addToFavourite(clickEvent.article)
+            is ClickEvent.RemoteFavourite -> removeFromFavourite(clickEvent.article)
+            ClickEvent.ToggleFavouriteFilter -> {
+                isFavourite = !isFavourite
+                viewArticles(selectedTag)
+            }
+            ClickEvent.ClearCache -> hardRefresh()
+        }
+
+    }
+
+    private fun addToFavourite(article: Article) {
         disposable.add(
-            repository.fetchArticlesFromRemote(category, 1)
+            repository.addToFavourite(article)
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
                 .subscribe(::handleSuccess, ::handleError)
         )
     }
 
-    fun articleClicked(url: String) {
-        viewEffectsLiveData.onNext(ViewEffects.OpenNewsDetails(url))
+    private fun removeFromFavourite(article: Article) {
+        disposable.add(
+            repository.remoteFromFavourite(article)
+                .subscribeOn(scheduler.io)
+                .observeOn(scheduler.io)
+                .subscribe(::handleSuccess, ::handleError)
+        )
+    }
+
+    private fun hardRefresh() {
+        disposable.add(
+            repository.forceRefresh(selectedTag)
+                .subscribeOn(scheduler.io)
+                .observeOn(scheduler.io)
+                .subscribe(::handleSuccess, ::handleError)
+        )
     }
 
     private fun handleSuccess() {
@@ -83,8 +113,8 @@ class HeadlinesViewModel(
     }
 
     private fun readList(articleList: List<Article>) {
-        if (articleList.isEmpty())
-            viewMoreArticles()
+        if (articleList.isEmpty() && !isFavourite)
+            viewMoreArticles(currentListSize = 0)
         else
             articleLiveData.postValue(articleList)
     }

@@ -17,10 +17,3 @@ data class Source(
     val id: String = "",
     val name: String = ""
 )
-
-sealed class ViewEffects {
-    object RefreshCompleted : ViewEffects()
-    data class OpenNewsDetails(
-        val newsUrl: String
-    ) : ViewEffects()
-}

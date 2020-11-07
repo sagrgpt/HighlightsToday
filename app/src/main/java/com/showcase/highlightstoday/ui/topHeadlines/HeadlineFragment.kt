@@ -1,10 +1,7 @@
 package com.showcase.highlightstoday.ui.topHeadlines
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -13,11 +10,6 @@ import com.google.android.material.chip.Chip
 import com.showcase.highlightstoday.DEFAULT_TAG
 import com.showcase.highlightstoday.R
 import com.showcase.highlightstoday.TAG_LIST
-import com.showcase.highlightstoday.ViewEffects
-import com.showcase.highlightstoday.repository.NewsRepository
-import com.showcase.highlightstoday.repository.database.DatabaseFactory
-import com.showcase.highlightstoday.repository.network.NetworkFactory
-import com.showcase.highlightstoday.schedulers.DefaultScheduler
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
 import com.showcase.highlightstoday.ui.BaseFragment
 import io.reactivex.disposables.Disposable
@@ -31,15 +23,16 @@ class HeadlineFragment : BaseFragment() {
     lateinit var scheduler: SchedulerProvider
     lateinit var adapter: ArticleAdapter
     val bottomListener: () -> Unit = {
-        viewModel.viewMoreArticles(getSelectedTag())
+        viewModel.viewMoreArticles(getSelectedTag(), 1)
     }
-    val clickListener: (String) -> Unit = {
-        viewModel.articleClicked(it)
+    val clickListener: (ClickEvent) -> Unit = {
+        viewModel.onClick(it)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getInjector().inject(this)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +47,18 @@ class HeadlineFragment : BaseFragment() {
         initTags()
         setUpSwipeToRefresh()
         refreshWorkout(getSelectedTag())
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.favouriteFilter -> handleFavoriteFilter(item)
+            R.id.clearCache -> viewModel.onClick(ClickEvent.ClearCache)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
@@ -85,6 +90,16 @@ class HeadlineFragment : BaseFragment() {
             .navigate(direction)
     }
 
+    private fun handleFavoriteFilter(item: MenuItem) {
+        if (item.title == getString(R.string.view_favorite)) {
+            item.title = getString(R.string.view_all)
+            item.setIcon(R.drawable.ic_favorite_selected)
+        } else {
+            item.title = getString(R.string.view_favorite)
+            item.setIcon(R.drawable.ic_favorite_unselected)
+        }
+        viewModel.onClick(ClickEvent.ToggleFavouriteFilter)
+    }
 
     private fun initRecyclerView() {
         articleList?.layoutManager = LinearLayoutManager(
@@ -115,6 +130,7 @@ class HeadlineFragment : BaseFragment() {
     private fun getSelectedTag() = TAG_LIST[chipGroup.checkedChipId - 1]
 
     private fun setUpSwipeToRefresh() {
+        swipeToRefresh.setColorSchemeResources(R.color.design_default_color_primary)
         swipeToRefresh.setOnRefreshListener {
             refreshWorkout(getSelectedTag())
         }
