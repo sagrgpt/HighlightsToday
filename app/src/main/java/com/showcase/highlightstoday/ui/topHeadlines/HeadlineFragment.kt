@@ -2,6 +2,7 @@ package com.showcase.highlightstoday.ui.topHeadlines
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -74,6 +75,10 @@ class HeadlineFragment : BaseFragment() {
     private fun trigger(effect: ViewEffects) {
         when (effect) {
             ViewEffects.RefreshCompleted -> swipeToRefresh.isRefreshing = false
+            ViewEffects.NetworkError -> Toast.makeText(
+                context,
+                getString(R.string.internetIssue),
+                Toast.LENGTH_LONG).show()
             is ViewEffects.OpenNewsDetails -> navigateToDetailNews(effect.newsUrl)
         }
     }

@@ -12,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
+import java.io.IOException
 
 class HeadlinesViewModel(
     private val scheduler: SchedulerProvider,
@@ -109,6 +110,9 @@ class HeadlinesViewModel(
     }
 
     private fun handleError(e: Throwable) {
+        if (e is IOException)
+            viewEffectsLiveData.onNext(ViewEffects.NetworkError)
+        viewEffectsLiveData.onNext(ViewEffects.RefreshCompleted)
         Timber.e(e)
     }
 

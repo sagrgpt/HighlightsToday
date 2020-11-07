@@ -4,6 +4,7 @@ import com.showcase.highlightstoday.Article
 
 sealed class ViewEffects {
     object RefreshCompleted : ViewEffects()
+    object NetworkError: ViewEffects()
     data class OpenNewsDetails(
         val newsUrl: String
     ) : ViewEffects()

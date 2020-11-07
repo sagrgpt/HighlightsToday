@@ -6,6 +6,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * A self-contained factory for Network module.
@@ -14,6 +15,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkFactory {
 
     private const val baseUrl = "https://newsapi.org/"
+    private const val connectionTimeout = 35L
+    private const val readTimeout = 35L
+    private const val writeTimeout = 35L
+    private const val callTimeout = 10L
 
     /**
      * Creates a new instance of a network gateway
@@ -47,6 +52,10 @@ object NetworkFactory {
     private fun okHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .callTimeout(callTimeout, TimeUnit.SECONDS)
             .build()
     }
 
