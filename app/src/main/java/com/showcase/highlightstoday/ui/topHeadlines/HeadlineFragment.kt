@@ -23,7 +23,7 @@ class HeadlineFragment : BaseFragment() {
     lateinit var scheduler: SchedulerProvider
     lateinit var adapter: ArticleAdapter
     val bottomListener: () -> Unit = {
-        viewModel.viewMoreArticles(getSelectedTag(), 1)
+        viewModel.viewMoreArticles(getSelectedTag())
     }
     val clickListener: (ClickEvent) -> Unit = {
         viewModel.onClick(it)

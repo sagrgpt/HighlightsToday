@@ -49,7 +49,7 @@ class HeadlinesViewModel(
         )
     }
 
-    fun viewMoreArticles(tag: String = selectedTag, currentListSize: Int) {
+    fun viewMoreArticles(tag: String = selectedTag) {
         selectedTag = tag
         disposable.add(
             repository.fetchArticlesFromRemote(tag, isFavourite)
@@ -96,7 +96,7 @@ class HeadlinesViewModel(
 
     private fun hardRefresh() {
         disposable.add(
-            repository.forceRefresh(selectedTag)
+            repository.forceRefresh()
                 .subscribeOn(scheduler.io)
                 .observeOn(scheduler.io)
                 .subscribe(::handleSuccess, ::handleError)
@@ -113,10 +113,7 @@ class HeadlinesViewModel(
     }
 
     private fun readList(articleList: List<Article>) {
-        if (articleList.isEmpty() && !isFavourite)
-            viewMoreArticles(currentListSize = 0)
-        else
-            articleLiveData.postValue(articleList)
+        articleLiveData.postValue(articleList)
     }
 
     class HeadlinesVmFactory(

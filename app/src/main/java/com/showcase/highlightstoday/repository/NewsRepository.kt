@@ -42,7 +42,7 @@ class NewsRepository(
         return cache.removeFromFavourite(article.toEntity())
     }
 
-    fun forceRefresh(category: String): Completable {
+    fun forceRefresh(): Completable {
         return Observable.fromCallable{
             cache.clearCache()
         }
