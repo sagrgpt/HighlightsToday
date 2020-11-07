@@ -1,4 +1,4 @@
-package com.showcase.highlightstoday.ui
+package com.showcase.highlightstoday.ui.topHeadlines
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

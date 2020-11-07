@@ -8,6 +8,7 @@ import com.showcase.highlightstoday.repository.SourceEntity
 import com.showcase.highlightstoday.repository.dataSource.NewsCache
 import com.showcase.highlightstoday.repository.dataSource.NewsRemote
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
+import com.showcase.highlightstoday.ui.topHeadlines.HeadlinesViewModel
 import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject

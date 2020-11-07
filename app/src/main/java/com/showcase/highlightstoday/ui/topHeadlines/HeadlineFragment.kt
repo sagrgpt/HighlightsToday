@@ -1,9 +1,12 @@
-package com.showcase.highlightstoday.ui
+package com.showcase.highlightstoday.ui.topHeadlines
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.showcase.highlightstoday.DEFAULT_TAG
@@ -14,9 +17,9 @@ import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.repository.database.DatabaseFactory
 import com.showcase.highlightstoday.repository.network.NetworkFactory
 import com.showcase.highlightstoday.schedulers.DefaultScheduler
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_headline.*
 
-class MainActivity : AppCompatActivity() {
+class HeadlineFragment : Fragment() {
 
     private lateinit var repository: NewsRepository
     private lateinit var adapter: ArticleAdapter
@@ -26,9 +29,14 @@ class MainActivity : AppCompatActivity() {
         viewModel.viewMoreArticles(getSelectedTag())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_headline, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         setUpViewModel()
         initRecyclerView()
         initTags()
@@ -53,11 +61,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         articleList?.layoutManager = LinearLayoutManager(
-            this,
+            requireContext(),
             LinearLayoutManager.VERTICAL,
             false
         )
-        adapter = ArticleAdapter(this, bottomListener)
+        adapter = ArticleAdapter(requireContext(), bottomListener)
         articleList?.adapter = adapter
     }
 
@@ -88,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpViewModel() {
         val networkGateway = NetworkFactory.createGateway()
-        val databaseGateway = DatabaseFactory.createGateway(applicationContext)
+        val databaseGateway = DatabaseFactory.createGateway(requireContext().applicationContext)
 
         repository = NewsRepository(
             networkGateway.getNewsRemote(),
@@ -98,16 +106,12 @@ class MainActivity : AppCompatActivity() {
         val viewModelFactory = HeadlinesViewModel.HeadlinesVmFactory(DefaultScheduler(), repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(HeadlinesViewModel::class.java)
 
-        viewModel.articles.observe(
-            this,
-            Observer { adapter.submitList(it) }
-        )
+        viewModel.articles
+            .observe(viewLifecycleOwner) { adapter.submitList(it) }
 
-        viewModel.viewEffects.observe(
-            this,
-            Observer { trigger(it) }
-        )
+
+        viewModel.viewEffects
+            .observe(viewLifecycleOwner) { trigger(it) }
 
     }
-
 }
