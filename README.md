@@ -11,6 +11,7 @@ This is a simple offline first news headlines app
 
 
 ## - Built With
+- [NewsApi.org](https://newsapi.org/) - Get breaking news headlines, and search for articles from news sources and blogs all over the web with these news API
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
 - [Rx-Java](https://github.com/ReactiveX/RxJava) - For composing asynchronous and event-based programs by using observable sequences.
 - [Android Architecture Components](https://developer.android.com/topic/libraries/architecture) - Collection of libraries that help you design robust, testable, and maintainable apps.
@@ -21,4 +22,4 @@ This is a simple offline first news headlines app
 - [OkHttp](http://square.github.io/okhttp/) - HTTP client that's efficient by default: HTTP/2 support allows all requests to the same host to share a socket
 - [Mockito](http://site.mockito.org/) - Most popular mocking framework for Java/kotlin.
 
-This application also leverages the benefits of TDD to achieve 92% code coverage for Business Logic.
+Icons made by [Those Icons](https://www.flaticon.com/authors/those-icons) from [Flaticon](https://www.flaticon.com)
