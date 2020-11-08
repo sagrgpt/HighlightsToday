@@ -27,13 +27,13 @@ object NetworkFactory {
         return RemoteGateway(getRemoteApi())
     }
 
-    private fun getRemoteApi(): NewsApi {
+    private fun getRemoteApi(): NewsArticleApi {
         val retrofit = retrofit(
             okHttpClient(httpLoggingInterceptor()),
             gsonFactoryConverter()
         )
 
-        return retrofit.create(NewsApi::class.java)
+        return retrofit.create(NewsArticleApi::class.java)
     }
 
     private fun retrofit(

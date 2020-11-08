@@ -2,16 +2,17 @@ package com.showcase.highlightstoday.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.verify
-import com.showcase.highlightstoday.Article
 import com.showcase.highlightstoday.repository.ArticleEntity
 import com.showcase.highlightstoday.repository.NewsRepository
 import com.showcase.highlightstoday.repository.SourceEntity
 import com.showcase.highlightstoday.repository.dataSource.NewsCache
 import com.showcase.highlightstoday.repository.dataSource.NewsRemote
 import com.showcase.highlightstoday.schedulers.SchedulerProvider
-import com.showcase.highlightstoday.ui.topHeadlines.ClickEvent
 import com.showcase.highlightstoday.ui.topHeadlines.HeadlinesViewModel
-import io.reactivex.*
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import org.junit.Before
@@ -29,6 +30,7 @@ class HeadlinesViewModelTest {
 
     @Mock
     private lateinit var cache: NewsCache
+
     @Mock
     private lateinit var remote: NewsRemote
     private val scheduler = object : SchedulerProvider {
@@ -82,7 +84,7 @@ class HeadlinesViewModelTest {
     @Test
     fun emptyCacheTest() {
         val cachedArticleList = emptyList<ArticleEntity>()
-        val remoteArticleList = listOf(article1,article1)
+        val remoteArticleList = listOf(article1, article1)
         val category = "technology"
         var emitter: ObservableEmitter<List<ArticleEntity>>? = null
         `when`(cache.getHeadlines(category))
@@ -99,18 +101,18 @@ class HeadlinesViewModelTest {
         viewModel.viewArticles(category)
         emitter?.onNext(remoteArticleList)
 
-        verify(remote, times(2))
-            .getHeadlines(category,1)
+        verify(remote)
+            .getHeadlines(category, 1)
         val result = viewModel.articles.value!!
-        assert(result.size ==2)
+        assert(result.size == 2)
     }
 
     @Test
-    fun remotePaginationTest(){
+    fun remotePaginationTest() {
         val cachedArticleList = mutableListOf(
-            article1,article1,article1,article1,article1,article1,article1,article1,article1,article1
+            article1, article1, article1, article1, article1, article1, article1, article1, article1, article1
         )
-        val remoteArticleList = listOf(article1,article1)
+        val remoteArticleList = listOf(article1, article1)
         val category = "technology"
         val subject: PublishSubject<List<ArticleEntity>> = PublishSubject.create()
 
@@ -125,7 +127,7 @@ class HeadlinesViewModelTest {
 
         viewModel.viewArticles(category)
         subject.onNext(cachedArticleList)
-        viewModel.viewMoreArticles(category, 10)
+        viewModel.viewMoreArticles(category)
         cachedArticleList.addAll(remoteArticleList)
         subject.onNext(cachedArticleList)
 
@@ -133,15 +135,5 @@ class HeadlinesViewModelTest {
         val result = viewModel.articles.value!!
         assert(result.size == 12)
 
-    }
-
-    @Test
-    fun paginationTest() {
-
-        val tag = "General"
-        val currentItemsVisibleToUser = 10
-        viewModel.viewMoreArticles(tag, 10)
-
-        verify(cache).getTillPage(2)
     }
 }

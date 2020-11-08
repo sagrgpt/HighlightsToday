@@ -1,5 +1,6 @@
 package com.showcase.highlightstoday.repository.network
 
+import com.showcase.highlightstoday.API_KEY
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -10,7 +11,7 @@ import retrofit2.http.Query
  * A retrofit interface that exposes the
  * [News APIs](https://newsapi.org/)
  */
-interface NewsApi {
+interface NewsArticleApi {
 
     /**
      * Get a list of top headlines
@@ -21,7 +22,7 @@ interface NewsApi {
      * @return List of news articles
      */
     @GET("v2/top-headlines")
-    /*@Headers("Authorization: ********")*/
+    @Headers("Authorization: $API_KEY")
     fun getHeadlines(
         @Query("country") country: String = DEFAULT_COUNTRY,
         @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,

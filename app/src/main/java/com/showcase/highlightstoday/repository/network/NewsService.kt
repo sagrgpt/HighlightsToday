@@ -11,10 +11,10 @@ import java.util.*
 /**
  * This class converts the json values from server to network entity
  * @param api: The service needed for api communication
- * @see [NewsApi]
+ * @see [NewsArticleApi]
  */
 class NewsService(
-    private val api: NewsApi
+    private val api: NewsArticleApi
 ) : NewsRemote {
 
     override fun getHeadlines(category: String, page: Int): Single<List<ArticleEntity>> {
