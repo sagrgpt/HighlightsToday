@@ -22,4 +22,6 @@ This is a simple offline first news headlines app
 - [OkHttp](http://square.github.io/okhttp/) - HTTP client that's efficient by default: HTTP/2 support allows all requests to the same host to share a socket
 - [Mockito](http://site.mockito.org/) - Most popular mocking framework for Java/kotlin.
 
-Icons made by [Those Icons](https://www.flaticon.com/authors/those-icons) from [Flaticon](https://www.flaticon.com)
+## - Icons made by
+- [Those Icons](https://www.flaticon.com/authors/those-icons) from [Flaticon](https://www.flaticon.com)
+- [Material Icons](https://material.io/resources/icons/?style=baseline) are delightful, beautifully crafted symbols for common actions and items from [Google](https://material.io/design)
