@@ -17,6 +17,10 @@ android {
         versionCode 1
         versionName "1.0"
 
+        // Please ensure you have a valid API KEY
+        // for newsApi.org to use this app.
+        buildConfigField("String", "API_KEY", API_KEY)
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
