@@ -69,7 +69,7 @@ class NewsDb(
             isFavourite = isSaved,
             description = description,
             url = url,
-            urlToImage = urlToImage,
+            urlToImage = urlToImage ?: "",
             source = SourceEntity(source.id, source.name)
         )
     }

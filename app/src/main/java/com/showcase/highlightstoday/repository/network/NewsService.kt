@@ -43,7 +43,7 @@ class NewsService(
             source = source.toEntity(),
             title = title,
             url = url,
-            urlToImage = urlToImage,
+            urlToImage = urlToImage ?: "",
             category = category
         )
     }

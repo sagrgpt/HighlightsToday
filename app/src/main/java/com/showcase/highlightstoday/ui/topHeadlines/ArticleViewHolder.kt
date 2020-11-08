@@ -26,7 +26,7 @@ class ArticleViewHolder(
     private val imageView = itemView.findViewById<ImageView>(R.id.newsImage)
     private val title = itemView.findViewById<TextView>(R.id.articleTitle)
     private val desc = itemView.findViewById<TextView>(R.id.articleDesc)
-    private val source= itemView.findViewById<TextView>(R.id.articleSource)
+    private val source = itemView.findViewById<TextView>(R.id.articleSource)
     private val author = itemView.findViewById<TextView>(R.id.author)
     private val date = itemView.findViewById<TextView>(R.id.articleDate)
     private val favBtn = itemView.findViewById<ImageButton>(R.id.favouriteBtn)
@@ -55,7 +55,7 @@ class ArticleViewHolder(
     }
 
     private fun setDesc() {
-        article.description.takeUnless { it=="Unknown" }
+        article.description.takeUnless { it == "Unknown" }
             ?.also {
                 desc?.visibility = View.VISIBLE
                 desc?.text = it
@@ -90,7 +90,7 @@ class ArticleViewHolder(
     }
 
     private fun setFavBtn() {
-        if(article.isFavourite)
+        if (article.isFavourite)
             favBtn.setImageResource(R.drawable.ic_favorite_selected)
         else
             favBtn.setImageResource(R.drawable.ic_favorite_unselected)
@@ -101,23 +101,17 @@ class ArticleViewHolder(
         articleContainer.setOnClickListener {
             clickListener(ClickEvent.CardClicked(article.url))
         }
+
         favBtn.setOnClickListener {
-            if(article.isFavourite)
-                removeFromFav()
+            if (article.isFavourite)
+                clickListener(ClickEvent.AddToFavourite(article))
             else
-                saveToFav()
+                clickListener(ClickEvent.AddToFavourite(article))
         }
     }
 
-    private fun saveToFav() {
-        clickListener(ClickEvent.AddToFavourite(article))
-        article = article.copy(isFavourite = true)
-        setFavBtn()
-    }
-
-    private fun removeFromFav() {
-        clickListener(ClickEvent.RemoteFavourite(article))
-        article = article.copy(isFavourite = false)
+    fun updateFavourite(favourite: Boolean) {
+        article = article.copy(isFavourite = favourite)
         setFavBtn()
     }
 

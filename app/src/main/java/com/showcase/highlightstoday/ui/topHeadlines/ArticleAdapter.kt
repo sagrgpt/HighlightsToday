@@ -15,17 +15,35 @@ class ArticleAdapter(
     private val lastItemReachedTrigger: () -> Unit,
     private val clickListener: (ClickEvent) -> Unit
 ) : ListAdapter<Article, ArticleViewHolder>(DiffCallback())  {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        return ArticleViewHolder(context, parent.inflate(R.layout.article_layout), clickListener)
+         return ArticleViewHolder(
+             context,
+             parent.inflate(R.layout.article_layout),
+             clickListener
+         )
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         if(position == itemCount-1)
             lastItemReachedTrigger()
-        holder.bindTo(getItem(position))
+            holder.bindTo(getItem(position))
+    }
+
+    override fun onBindViewHolder(holder: ArticleViewHolder, position: Int, payloads: MutableList<Any>) {
+        if(payloads.isEmpty())
+            super.onBindViewHolder(holder, position, payloads)
+        else {
+            if (payloads.any { it is Boolean }) {
+                val newFavouriteValue = getItem(position)
+                holder.updateFavourite(newFavouriteValue.isFavourite)
+            }
+        }
+
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Article>() {
+
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem.title == newItem.title
                 && oldItem.publishedAt == newItem.publishedAt
@@ -36,6 +54,11 @@ class ArticleAdapter(
             return oldItem.title == newItem.title
                 && oldItem.publishedAt == newItem.publishedAt
                 && oldItem.category == newItem.category
+                && oldItem.isFavourite == newItem.isFavourite
+        }
+
+        override fun getChangePayload(oldItem: Article, newItem: Article): Any? {
+            return newItem.isFavourite
         }
     }
 
