@@ -8,4 +8,9 @@
     <string name="view_all">View All</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="internetIssue">Please check you network connection</string>
+    <string name="clear_cache_title">Clear Cache and reset?</string>
+    <string name="clear_cache_message">You were about to clear the cache. This will erase all saved data including your favourites.\n Do you want to continue?</string>
+    <string name="clear_cache_positive_btn">Clear</string>
+    <string name="clear_cache_negetive_btn">Close</string>
+    <string name="today">Today</string>
 </resources>

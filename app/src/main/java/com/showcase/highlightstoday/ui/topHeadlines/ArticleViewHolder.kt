@@ -1,6 +1,7 @@
 package com.showcase.highlightstoday.ui.topHeadlines
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -82,11 +83,21 @@ class ArticleViewHolder(
     }
 
     private fun setDate() {
-        Calendar.getInstance()
+
+        val cal = Calendar.getInstance()
             .apply { timeInMillis = article.publishedAt }
-            .time
-            .let { SimpleDateFormat("hh:mm a dd-MM-yyyy", Locale.ROOT).format(it) }
-            .also { date?.text = it }
+
+        if(DateUtils.isToday(cal.timeInMillis)) {
+            cal.time
+                .let { SimpleDateFormat("hh:mm a", Locale.ROOT).format(it) }
+                .let { "$it ${context.getString(R.string.today)}" }
+                .also { date?.text = it }
+        } else {
+            cal.time
+                .let { SimpleDateFormat("hh:mm a dd-MM-yyyy", Locale.ROOT).format(it) }
+                .also { date?.text = it }
+        }
+
     }
 
     private fun setFavBtn() {
@@ -104,7 +115,7 @@ class ArticleViewHolder(
 
         favBtn.setOnClickListener {
             if (article.isFavourite)
-                clickListener(ClickEvent.AddToFavourite(article))
+                clickListener(ClickEvent.RemoteFavourite(article))
             else
                 clickListener(ClickEvent.AddToFavourite(article))
         }

@@ -21,7 +21,7 @@ class HeadlinesViewModel(
 
     private val disposable = CompositeDisposable()
     private val articleLiveData = MutableLiveData<List<Article>>()
-    private val viewEffectsLiveData: PublishSubject<ViewEffects> = PublishSubject.create()
+    private val viewEffectsStream: PublishSubject<ViewEffects> = PublishSubject.create()
     private var selectedTag: String = DEFAULT_TAG
     private var isFavourite = false
     val articles: LiveData<List<Article>> = articleLiveData
@@ -32,7 +32,7 @@ class HeadlinesViewModel(
     }
 
     fun listenViewEffects(): Observable<ViewEffects> {
-        return viewEffectsLiveData
+        return viewEffectsStream
     }
 
     fun viewArticles(tag: String) {
@@ -63,7 +63,7 @@ class HeadlinesViewModel(
 
     fun onClick(clickEvent: ClickEvent) {
         when (clickEvent) {
-            is ClickEvent.CardClicked -> viewEffectsLiveData.onNext(
+            is ClickEvent.CardClicked -> viewEffectsStream.onNext(
                 ViewEffects.OpenNewsDetails(clickEvent.articleLink)
             )
             is ClickEvent.AddToFavourite -> addToFavourite(clickEvent.article)
@@ -72,7 +72,8 @@ class HeadlinesViewModel(
                 isFavourite = !isFavourite
                 viewArticles(selectedTag)
             }
-            ClickEvent.ClearCache -> hardRefresh()
+            ClickEvent.ClearCache -> viewEffectsStream.onNext(ViewEffects.ClearCacheDialog)
+            ClickEvent.HardReset -> hardRefresh()
         }
 
     }
@@ -105,14 +106,14 @@ class HeadlinesViewModel(
     }
 
     private fun handleSuccess() {
-        viewEffectsLiveData.onNext(ViewEffects.RefreshCompleted)
+        viewEffectsStream.onNext(ViewEffects.RefreshCompleted)
         Timber.v("Fetched new workouts from remote")
     }
 
     private fun handleError(e: Throwable) {
         if (e is IOException)
-            viewEffectsLiveData.onNext(ViewEffects.NetworkError)
-        viewEffectsLiveData.onNext(ViewEffects.RefreshCompleted)
+            viewEffectsStream.onNext(ViewEffects.NetworkError)
+        viewEffectsStream.onNext(ViewEffects.RefreshCompleted)
         Timber.e(e)
     }
 

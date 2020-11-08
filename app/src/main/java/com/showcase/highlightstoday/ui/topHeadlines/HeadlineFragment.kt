@@ -1,5 +1,6 @@
 package com.showcase.highlightstoday.ui.topHeadlines
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -80,7 +81,21 @@ class HeadlineFragment : BaseFragment() {
                 getString(R.string.internetIssue),
                 Toast.LENGTH_LONG).show()
             is ViewEffects.OpenNewsDetails -> navigateToDetailNews(effect.newsUrl)
+            is ViewEffects.ClearCacheDialog -> showClearCacheDialog()
         }
+    }
+
+    private fun showClearCacheDialog() {
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.clear_cache_title))
+            .setMessage(getString(R.string.clear_cache_message))
+            .setPositiveButton(getString(R.string.clear_cache_positive_btn)) { _, _ ->
+                viewModel.onClick(ClickEvent.HardReset)
+            }
+            .setNegativeButton(getString(R.string.clear_cache_negetive_btn)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun refreshWorkout(tag: String) {
